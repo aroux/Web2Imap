@@ -7,10 +7,10 @@ public class NoCommandFoundException extends CommandException {
 	public NoCommandFoundException(String id, String key, String args) {
 		super(id, key, args);
 	}
-	
+
 	@Override
 	public String toString() {
-		return this.getClass().getName() + ".  No command has been found for id '" 
-		+ getId() + "', key '" + getKey() + "' and args '" + getArgs() + "'";
+		return this.getClass().getName() + ".  No command has been found for id '" + getId() + "', key '" + getKey() + "' and args '"
+				+ getArgs() + "'";
 	}
 }
