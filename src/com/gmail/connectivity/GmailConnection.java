@@ -24,9 +24,9 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.gmail.data.EmailRaw;
-import com.gmail.data.EmailSummary;
 import com.gmail.html.WebParser;
+import com.webmail.data.EmailRaw;
+import com.webmail.data.EmailSummary;
 
 public class GmailConnection {
 

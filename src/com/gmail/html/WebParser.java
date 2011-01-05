@@ -18,9 +18,9 @@ import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.util.Translate;
 
-import com.gmail.data.EmailDetails;
-import com.gmail.data.EmailSummary;
 import com.gmail.utils.Pair;
+import com.webmail.data.EmailDetails;
+import com.webmail.data.EmailSummary;
 
 public class WebParser {
 

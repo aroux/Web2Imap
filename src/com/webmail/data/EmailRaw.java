@@ -1,4 +1,4 @@
-package com.gmail.data;
+package com.webmail.data;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
