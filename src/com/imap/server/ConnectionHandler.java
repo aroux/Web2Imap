@@ -11,6 +11,7 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
+import com.engine.data.UserInformation;
 import com.imap.command.Command;
 import com.imap.command.CommandStore;
 import com.imap.command.exc.CommandException;

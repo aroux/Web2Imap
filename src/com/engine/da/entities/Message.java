@@ -11,18 +11,20 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
 
 @Entity
 @Table(name = "MESSAGE")
 public class Message {
 	
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name="increment", strategy = "increment")
+	@GeneratedValue(generator = "message_increment")
+	@GenericGenerator(name="message_increment", strategy = "increment")
 	@Column(name = "UID")
 	private Integer uid;
 	
-	@Column(name = "WEBMAIL_UID")
+	@IndexColumn(name = "WEBMAIL_UID")
 	private Long webmailuid;
 	
 	@Temporal(TemporalType.TIMESTAMP)

@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Example;
 
+import com.engine.da.entities.MailAccount;
 import com.engine.da.entities.Message;
 
 public class DBManager {
@@ -24,6 +25,21 @@ public class DBManager {
 	public static DBManager getInstance() {
 		if (self == null) self = new DBManager();
 		return self;
+	}
+	
+	public void createNewAccount(String emailAddress) {
+		MailAccount mAccount = new MailAccount(emailAddress); 
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		try {
+			session.save(mAccount);
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+			throw e;
+		}
+		session.close();
 	}
 	
 	public void saveMessage(Message message) {

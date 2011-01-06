@@ -16,5 +16,15 @@
 	<classpathentry kind="lib" path="libs/sitecapturer.jar"/>
 	<classpathentry kind="lib" path="libs/thumbelina.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="h2/h2-1.2.147.jar"/>
+	<classpathentry kind="lib" path="libs/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="libs/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="libs/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="libs/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="libs/hibernate3.jar"/>
+	<classpathentry kind="lib" path="libs/javassist-3.12.0.GA.jar"/>
+	<classpathentry kind="lib" path="libs/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-log4j12-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
