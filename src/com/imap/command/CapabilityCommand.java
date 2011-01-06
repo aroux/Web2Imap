@@ -15,6 +15,12 @@ public class CapabilityCommand extends Command {
 	public static CapabilityCommand buildCommand(String commandId, String commandKey, String commandArgs) {
 		return new CapabilityCommand(commandId, commandKey, commandArgs);
 	}
+	
+	@Override
+	public boolean checkState(EConnectionState state) {
+		// Any state command
+		return true;
+	}
 
 	@Override
 	public Response executeImpl() {
@@ -32,12 +38,6 @@ public class CapabilityCommand extends Command {
 	@Override
 	public Response executeCompletionImpl() throws CommandException {
 		throw new ExecuteCompletionNotSupportedException(commandId, commandKey, commandArgs);
-	}
-
-	@Override
-	public boolean checkState(EConnectionState state) {
-		// Any state command
-		return true;
 	}
 
 }

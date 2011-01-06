@@ -27,6 +27,8 @@ public class CommandStore extends HashMap<String, Method> {
 					.getMethod("buildCommand", String.class, String.class, String.class));
 			this.put(ECommand.LOGIN.getValue(), LoginCommand.class
 					.getMethod("buildCommand", String.class, String.class, String.class));
+			this.put(ECommand.LSUB.getValue(), LsubCommand.class
+					.getMethod("buildCommand", String.class, String.class, String.class));
 			//this.put(ECommand.AUTHENTICATE.getValue(), AuthenticateCommand.class
 			//		.getMethod("buildCommand", String.class, String.class, String.class));
 		} catch (NoSuchMethodException e) {
@@ -40,7 +42,9 @@ public class CommandStore extends HashMap<String, Method> {
 		return self;
 	}
 	
-	public Command getCommandForInput(String input) throws CommandException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public Command getCommandForInput(String input) throws CommandException, 
+	IllegalArgumentException, IllegalAccessException, InvocationTargetException,
+	StringIndexOutOfBoundsException {
 		String commandId;
 		String commandKey;
 		String commandArgs;

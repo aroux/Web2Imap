@@ -21,6 +21,11 @@ public class AuthenticateCommand extends Command {
 			String commandArgs) {
 		return new AuthenticateCommand(commandId, commandKey, commandArgs);
 	}
+	
+	@Override
+	public boolean checkState(EConnectionState state) {
+		return state.getValue() == EConnectionState.NOT_AUTHENTICATE.getValue();
+	}
 
 	@Override
 	public Response executeImpl() throws AuthMethodNotSupportedException {
@@ -41,10 +46,5 @@ public class AuthenticateCommand extends Command {
 	@Override
 	public Response executeCompletionImpl() throws CommandException {
 		throw new ExecuteCompletionNotSupportedException(commandId, commandKey, commandArgs);
-	}
-
-	@Override
-	public boolean checkState(EConnectionState state) {
-		return state.getValue() == EConnectionState.NOT_AUTHENTICATE.getValue();
 	}
 }

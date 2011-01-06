@@ -3,7 +3,10 @@ package com.imap.enums;
 public enum ECommand {
 	CAPABILITY("CAPABILITY"),
 	LOGIN("LOGIN"),
-	AUTHENTICATE("AUTHENTICATE");
+	AUTHENTICATE("AUTHENTICATE"),
+	LSUB("LSUB"),
+	LIST("LIST"),
+	SELECT("SELECT");
 	
 	private final String value;
 	

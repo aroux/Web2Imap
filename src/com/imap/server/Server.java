@@ -33,7 +33,7 @@ public class Server {
 	public void run() throws IOException {
 		InetSocketAddress remoteAddress;
 		
-		logger.info("Running imap server...");
+		logger.info("Running imap server on port " + PORT + "...");
 		while(true) {
 			Socket socket = serverSocket.accept();
 			remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();

@@ -34,6 +34,11 @@ public class LoginCommand extends Command {
 	}
 	
 	@Override
+	public boolean checkState(EConnectionState state) {
+		return state.getValue() == EConnectionState.NOT_AUTHENTICATE.getValue();
+	}
+	
+	@Override
 	public Response executeImpl() throws CommandException {
 		UserInformation userInfo = extractUserInformation();
 		conHandler.setUserInfo(userInfo);
@@ -46,11 +51,6 @@ public class LoginCommand extends Command {
 	@Override
 	public Response executeCompletionImpl() throws CommandException {
 		throw new ExecuteCompletionNotSupportedException(commandId, commandKey, commandArgs);
-	}
-
-	@Override
-	public boolean checkState(EConnectionState state) {
-		return state.getValue() == EConnectionState.NOT_AUTHENTICATE.getValue();
 	}
 
 }

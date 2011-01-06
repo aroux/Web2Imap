@@ -88,6 +88,9 @@ public class ConnectionHandler extends Thread {
 				} catch (IllegalAccessException e) {
 					logger.error("Error while parsing/executing command.", e);
 					triggerErrorResponse(e);
+				} catch (StringIndexOutOfBoundsException e) {
+					logger.error("Error while parsing/executing command.", e);
+					triggerErrorResponse(e);
 				}
 			}
 		} catch (IOException e) {
