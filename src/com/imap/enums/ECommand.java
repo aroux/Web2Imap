@@ -9,11 +9,11 @@ public enum ECommand {
 	SELECT("SELECT");
 	
 	private final String value;
-	
+
 	private ECommand(String value) {
 		this.value = value;
 	}
-	
+
 	public String getValue() {
 		return value;
 	}

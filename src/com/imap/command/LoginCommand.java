@@ -12,27 +12,27 @@ public class LoginCommand extends Command {
 		super(commandId, commandKey, commandArgs);
 	}
 
-	public static LoginCommand buildCommand(String commandId, String commandKey, 
-			String commandArgs) {
+	public static LoginCommand buildCommand(String commandId, String commandKey, String commandArgs) {
 		return new LoginCommand(commandId, commandKey, commandArgs);
 	}
-	
+
 	private UserInformation extractUserInformation() throws CommandException {
 		String username;
 		String password;
-		
+
 		try {
 			String split[] = commandArgs.split(" ");
-			username = split[0].substring(1,split[0].length()-2);
-			password =  split[1].substring(1,split[1].length()-2);
+			username = split[0].substring(1, split[0].length() - 2);
+			password = split[1].substring(1, split[1].length() - 2);
 			return new UserInformation(username, password);
-		} catch (Exception e) {
-			throw new CommandException(commandId, commandKey, commandArgs,
-					"Impossible to extract user information from login command : ("
+		}
+		catch (Exception e) {
+			throw new CommandException(commandId, commandKey, commandArgs, "Impossible to extract user information from login command : ("
 					+ e.getClass().getName() + ") " + e.getMessage());
 		}
+
 	}
-	
+
 	@Override
 	public boolean checkState(EConnectionState state) {
 		return state.getValue() == EConnectionState.NOT_AUTHENTICATE.getValue();

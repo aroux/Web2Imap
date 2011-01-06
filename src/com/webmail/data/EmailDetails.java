@@ -1,15 +1,14 @@
-package com.gmail.data;
+package com.webmail.data;
 
 import java.util.List;
 
 public class EmailDetails extends EmailBase {
-	
+
 	private List<String> to;
-	
+
 	private String content;
 
-	
-	public EmailDetails(EmailSummary emailSummary, List<String> to, String subject, String content) {
+	public EmailDetails(EmailSummary emailSummary, List<String> to, String content) {
 		super(emailSummary.getFrom(), emailSummary.getSubject(), emailSummary.getDate(), emailSummary.getLink());
 		this.to = to;
 		this.content = content;
@@ -30,6 +29,5 @@ public class EmailDetails extends EmailBase {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
-	
+
 }
