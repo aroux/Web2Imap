@@ -3,7 +3,8 @@ package com.imap.enums;
 public enum EResponse {
 	OK("OK"), //
 	NO("NO"), //
-	BAD("BAD");
+	BAD("BAD"), //
+	BYE("BYE");
 
 	private final String value;
 

@@ -29,6 +29,12 @@ public class CommandStore extends HashMap<String, Method> {
 					.getMethod("buildCommand", String.class, String.class, String.class));
 			this.put(ECommand.LSUB.getValue(), LsubCommand.class
 					.getMethod("buildCommand", String.class, String.class, String.class));
+			this.put(ECommand.LIST.getValue(), ListCommand.class
+					.getMethod("buildCommand", String.class, String.class, String.class));
+			this.put(ECommand.LOGOUT.getValue(), LogoutCommand.class
+					.getMethod("buildCommand", String.class, String.class, String.class));
+			this.put(ECommand.NOOP.getValue(), NoopCommand.class
+					.getMethod("buildCommand", String.class, String.class, String.class));
 			//this.put(ECommand.AUTHENTICATE.getValue(), AuthenticateCommand.class
 			//		.getMethod("buildCommand", String.class, String.class, String.class));
 		}
@@ -68,7 +74,8 @@ public class CommandStore extends HashMap<String, Method> {
 
 		Method buildMethod = this.get(commandKey.toUpperCase());
 		if (buildMethod == null) {
-			throw new CommandException(commandId, commandKey, commandArgs);
+			throw new CommandException(commandId, commandKey, commandArgs, 
+					"Command not supported");
 		}
 
 		return (Command) buildMethod.invoke(null, commandId, commandKey, commandArgs);

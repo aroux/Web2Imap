@@ -25,9 +25,7 @@ public class CapabilityCommand extends Command {
 	public Response executeImpl() {
 		Response resp = new Response(commandId);
 
-		String respStr = resp.getResponsePrefix(commandKey, false);
-		respStr += " IMAP4rev1";// STARTTLS AUTH=PLAIN LOGINDISABLED";
-		resp.addResponseLine(respStr);
+		resp.genStandardPrefixedResponseLineWithContent(commandKey, false, " IMAP4rev1");// STARTTLS AUTH=PLAIN LOGINDISABLED";)
 
 		genCompletedResponseLine(resp);
 

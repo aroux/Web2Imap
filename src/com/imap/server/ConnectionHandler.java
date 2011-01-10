@@ -121,10 +121,12 @@ public class ConnectionHandler extends Thread {
 	}
 
 	private void triggerErrorResponse(@SuppressWarnings("unused") Exception e) {
+		lastCommand = null;
 		writeErrorResponse(EResponse.BAD);
 	}
 
 	private void triggerErrorResponse(CommandException e) {
+		lastCommand = null;
 		EResponse responseType = e.isRequireBadResponse() ? EResponse.BAD : EResponse.NO;
 		writeErrorResponse(responseType, e.getId());
 	}

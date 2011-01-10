@@ -18,19 +18,15 @@ public class LoginCommand extends Command {
 		return new LoginCommand(commandId, commandKey, commandArgs);
 	}
 
-	private UserInformation extractUserInformation() throws CommandException {
-		String username;
-		String password;
-
+	@Override
+	public boolean checkState(EConnectionState state) {
+		return state.getValue() == EConnectionState.NOT_AUTHENTICATE.getValue();
+	}
+	
+	protected UserInformation extractUserInformation() throws CommandException {
 		try {
-			String split[] = commandArgs.split("\\s+");
-			username = split[0];//substring(1, split[0].length() - 2);
-			password = split[1];//.substring(1, split[1].length() - 2);
-			if (username.charAt(0) == '"') {
-				username = username.substring(1, username.length()-2);
-				password = password.substring(1, password.length()-2);
-			}
-			return new UserInformation(username, password);
+			String split[] = tokenizeArgs();
+			return new UserInformation(split[0], split[1]);
 		}
 		catch (Exception e) {
 			throw new CommandException(commandId, commandKey, commandArgs, 
@@ -39,10 +35,6 @@ public class LoginCommand extends Command {
 		}
 	}
 
-	@Override
-	public boolean checkState(EConnectionState state) {
-		return state.getValue() == EConnectionState.NOT_AUTHENTICATE.getValue();
-	}
 	
 	@Override
 	public Response executeImpl() throws CommandException {
@@ -56,9 +48,11 @@ public class LoginCommand extends Command {
 				resp.setNewState(EConnectionState.AUTHENTICATE);
 				genCompletedResponseLine(resp);
 			} catch (WebmailWrongLoginException e) {
-				throw new CommandException(commandId, commandKey, commandArgs, 
+				CommandException exc = new CommandException(commandId, commandKey, commandArgs, 
 						"Impossible to login : ("
 						+ e.getClass().getName() + ") " + e.getMessage());
+				exc.setRequireBadResponse(false);
+				throw exc;
 			} catch (InstantiationException e) {
 				throw new CommandException(commandId, commandKey, commandArgs, 
 						"Impossible to login : ("
@@ -80,5 +74,4 @@ public class LoginCommand extends Command {
 	public Response executeCompletionImpl() throws CommandException {
 		throw new ExecuteCompletionNotSupportedException(commandId, commandKey, commandArgs);
 	}
-
 }

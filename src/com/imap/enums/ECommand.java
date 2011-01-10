@@ -6,7 +6,9 @@ public enum ECommand {
 	AUTHENTICATE("AUTHENTICATE"),
 	LSUB("LSUB"),
 	LIST("LIST"),
-	SELECT("SELECT");
+	SELECT("SELECT"),
+	LOGOUT("LOGOUT"), 
+	NOOP("NOOP");
 	
 	private final String value;
 

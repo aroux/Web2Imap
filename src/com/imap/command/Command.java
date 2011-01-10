@@ -35,7 +35,7 @@ public abstract class Command {
 	protected void genCompletedResponseLine(Response resp) {
 		String completedRespLine = resp.getResponsePrefix(EResponse.OK.getValue(), true);
 		completedRespLine += " " + commandKey + " completed";
-		resp.addResponseLine(completedRespLine);
+		resp.addRawResponseLine(completedRespLine);
 	}
 
 	public void addCommandCompletion(String input) {
@@ -71,5 +71,21 @@ public abstract class Command {
 
 	public void setConHandler(ConnectionHandler conHandler) {
 		this.conHandler = conHandler;
+	}
+	
+	protected String[] tokenizeArgs()  {
+		String split[] = commandArgs.split("\\s+");
+		int i;
+		for (i = 0; i < split.length; ++i) {
+			String str = split[i];
+			if (str.charAt(0) == '"') {
+				if (! str.equals("\"\"")) {
+					split[i] = str.substring(1, str.length()-1);
+				} else {
+					split[i] = "";
+				}
+			}
+		}
+		return split;
 	}
 }

@@ -2,6 +2,7 @@ package com.gmail.service.impl;
 
 import com.engine.data.UserInformation;
 import com.gmail.connectivity.GmailConnection;
+import com.webmail.exc.WebmailWrongLoginException;
 import com.webmail.service.IWebmailService;
 
 public class WebMailService implements IWebmailService {
@@ -13,7 +14,7 @@ public class WebMailService implements IWebmailService {
 	}
 	
 	@Override
-	public void login(UserInformation userInfo) {
+	public void login(UserInformation userInfo) throws WebmailWrongLoginException {
 		gmailConnection = new GmailConnection();
 		gmailConnection.login(userInfo.getUsername(), userInfo.getPassword());
 	}

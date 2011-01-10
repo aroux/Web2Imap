@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
@@ -18,11 +19,15 @@ import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.util.Translate;
 
+import com.gmail.connectivity.GmailConnection;
 import com.gmail.utils.Pair;
 import com.webmail.data.EmailDetails;
 import com.webmail.data.EmailSummary;
+import com.webmail.exc.WebParserException;
 
 public class WebParser {
+	
+	private static final Logger logger = Logger.getLogger(WebParser.class);
 
 	private Parser htmlParser;
 
@@ -43,44 +48,37 @@ public class WebParser {
 		}
 	}
 
-	public Map<String, String> getLoginFormInputs() {
+	public Map<String, String> getLoginFormInputs() throws WebParserException, ParserException {
 		Map<String, String> map = new HashMap<String, String>();
 
 		NodeFilter formFilter = new HasAttributeFilter("id", "gaia_loginform");
 		NodeList filteredNodes = list.extractAllNodesThatMatch(formFilter, true);
 		if (filteredNodes.size() != 1) {
-			System.err.println("Impossible to get form with id 'gaia_loginform' -> size : " + filteredNodes.size());
-			System.exit(-1);
+			throw new WebParserException("Impossible to get form with id 'gaia_loginform' -> size : " + filteredNodes.size());
 		}
 
 		Node formNode = filteredNodes.elementAt(0);
 		NodeFilter inputFilter = new TagNameFilter("input");
 		NodeList inputNodes = formNode.getChildren().extractAllNodesThatMatch(inputFilter, true);
 
-		try {
-			NodeIterator iter = inputNodes.elements();
-			while (iter.hasMoreNodes()) {
-				Node node = iter.nextNode();
-				TagNode tNode = (TagNode) node;
-				map.put(tNode.getAttribute("name"), tNode.getAttribute("value"));
-			}
-		}
-		catch (ParserException e) {
-			e.printStackTrace();
-			System.exit(-1);
+		NodeIterator iter = inputNodes.elements();
+		while (iter.hasMoreNodes()) {
+			Node node = iter.nextNode();
+			TagNode tNode = (TagNode) node;
+			map.put(tNode.getAttribute("name"), tNode.getAttribute("value"));
 		}
 
 		return map;
 	}
 
-	public String getRedirectingUrl() {
+	public String getRedirectingUrl() throws WebParserException {
 		String url = null;
 		NodeFilter metaFilter = new HasAttributeFilter("http-equiv", "refresh");
 		NodeList filteredNodes = list.extractAllNodesThatMatch(metaFilter, true);
 		if (filteredNodes.size() != 1) {
-			System.err.println("Impossible to get meta tag with http-equiv 'refresh' -> size : " + filteredNodes.size());
+			throw new WebParserException("Impossible to get meta tag with http-equiv 'refresh' -> size : " + filteredNodes.size());
+			//System.err.println("Impossible to get meta tag with http-equiv 'refresh' -> size : " + filteredNodes.size());
 			//System.out.println(list.toHtml());
-			System.exit(-1);
 		}
 		String content = ((TagNode) filteredNodes.elementAt(0)).getAttribute("content");
 		url = content.split("&#39;")[1].replace("&amp;", "&");

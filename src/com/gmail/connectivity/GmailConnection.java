@@ -23,13 +23,20 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
+import org.htmlparser.util.ParserException;
 
+import com.engine.MailGateway;
 import com.gmail.html.WebParser;
 import com.webmail.data.EmailRaw;
 import com.webmail.data.EmailSummary;
+import com.webmail.exc.WebParserException;
+import com.webmail.exc.WebmailWrongLoginException;
 
 public class GmailConnection {
 
+	private static final Logger logger = Logger.getLogger(GmailConnection.class);
+	
 	private final DefaultHttpClient httpClient;
 
 	private final WebParser wp;
@@ -62,23 +69,20 @@ public class GmailConnection {
 		return getPage(GMAIL_HOME);
 	}
 
-	@SuppressWarnings("unused")
-	private Cookie getCurrentGALXCookie() {
-		CookieStore cs = httpClient.getCookieStore();
-		List<Cookie> cookies = cs.getCookies();
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals("GALX")) {
-				return cookie;
-			}
-		}
-		return null;
-	}
+//	@SuppressWarnings("unused")
+//	private Cookie getCurrentGALXCookie() {
+//		CookieStore cs = httpClient.getCookieStore();
+//		List<Cookie> cookies = cs.getCookies();
+//		for (Cookie cookie : cookies) {
+//			if (cookie.getName().equals("GALX")) {
+//				return cookie;
+//			}
+//		}
+//		return null;
+//	}
 
 	private HttpPost genLoginPostRequest(Map<String, String> postVars, String username, String password) throws UnsupportedEncodingException {
 		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-		//		Cookie galxCookie = getCurrentGALXCookie();
-		//		if (galxCookie == null) System.err.print("Impossible to get GALX cookie");
-		//		else System.out.println("GALX cookie : " + galxCookie.getValue());
 
 		postVars.put("Email", username);
 		postVars.put("Passwd", password);
@@ -115,8 +119,13 @@ public class GmailConnection {
 	private StringBuffer getPage(String url) {
 		return executeRequest(new HttpGet(url));
 	}
+	
+	private void loginFailed(Exception e) throws WebmailWrongLoginException {
+		logger.error("Login failed. Cause : ", e);
+		throw new WebmailWrongLoginException("Wrong login : " + e.getClass().getName());
+	}
 
-	public void login(String username, String password) {
+	public void login(String username, String password) throws WebmailWrongLoginException {
 		try {
 			StringBuffer loginPageContent = getLoginPage();
 			wp.feedParser(loginPageContent);
@@ -128,13 +137,15 @@ public class GmailConnection {
 			String redirectUrl = wp.getRedirectingUrl();
 
 			//			Utils.inputStreamToFile(loginResponseContent, "C:\\Users\\Alexandre\\workspace\\GmailConnectivityTest\\data\\result.htm");
-			System.out.println(redirectUrl);
+			//System.out.println(redirectUrl);
 			refreshHomePage(redirectUrl);
 			//Utils.inputStreamToFile(homePage, "C:\\Users\\Alexandre\\workspace\\GmailConnectivityTest\\data\\result.htm");
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
+		} catch (WebParserException e) {
+			loginFailed(e);
+		} catch (ParserException e) {
+			loginFailed(e);
+		} catch (UnsupportedEncodingException e) {
+			loginFailed(e);
 		}
 	}
 

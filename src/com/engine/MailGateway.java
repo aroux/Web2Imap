@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -78,9 +80,12 @@ public class MailGateway {
 	}
 	
 	/**
-	 * Returns true if username is the mail address and if the address suffix
+	 * Returns true if username is a mail address and if the address suffix
 	 * matches a webmail module.
-	 * */
+	 * 
+	 * @param userInfo user information containing username and password
+	 * @return
+	 */
 	public boolean isMailProviderSupported(UserInformation userInfo) {
 		if (!userInfo.getUsername().contains("@")) return false;
 		String mailDomain = userInfo.getUsername().split("@")[1];
@@ -88,11 +93,32 @@ public class MailGateway {
 		return webmailServicesClassMap.containsKey(mailDomain);
 	}
 	
+	/**
+	 * This method executes login method of webmail module corresponding to
+	 * webmail module. If login fails, WebmailWrongLoginException is thrown.
+	 * 
+	 * @param userInfo
+	 * @throws WebmailWrongLoginException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
 	public void webmailLogin(UserInformation userInfo) throws 
 		WebmailWrongLoginException, InstantiationException, IllegalAccessException {
 		Class<IWebmailService> webmailServiceClass = webmailServicesClassMap.get(userInfo.getMailDomain());
 		IWebmailService webmailService = webmailServiceClass.newInstance();
 		webmailService.login(userInfo);
 
+	}
+	
+	public List<String> getDirectories(String pattern) {
+		List<String> directories = new ArrayList<String>();
+
+		// Temp code
+		if (pattern.equals("*")) {
+			directories.add("INBOX");
+		} else {
+			directories.add("");
+		}
+		return directories;
 	}
 }

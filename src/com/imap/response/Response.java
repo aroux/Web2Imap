@@ -32,16 +32,22 @@ public class Response {
 		}
 		return "* " + commandKey;
 	}
-
+	
 	public void genStandardPrefixedResponseLine(String commandKey, boolean tagged) {
 		responseLines.add(getResponsePrefix(commandKey, tagged));
+	}
+	
+	public void genStandardPrefixedResponseLineWithContent(String commandKey, 
+			boolean tagged, String content) {
+		String line = getResponsePrefix(commandKey, tagged) + " " + content;
+		responseLines.add(line);
 	}
 
 	public void genWaitingForNextCompletionResponseLine() {
 		responseLines.add("+");
 	}
-
-	public void addResponseLine(String line) {
+	
+	public void addRawResponseLine(String line) {
 		responseLines.add(line);
 	}
 
