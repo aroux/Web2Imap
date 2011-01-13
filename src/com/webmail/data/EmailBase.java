@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 public abstract class EmailBase {
 
@@ -12,16 +13,18 @@ public abstract class EmailBase {
 	private String subject;
 
 	private String link;
-
+	
 	private Calendar date;
-
+	
+	private Long webuid;
+	
 	public EmailBase(String from, String subject, String date, String link) {
 		super();
 		this.from = from;
 		this.subject = subject;
 		this.link = link;
 
-		parseDate(date);
+		//parseDate(date);
 	}
 
 	public EmailBase(String from, String subject, Calendar date, String link) {
@@ -61,7 +64,7 @@ public abstract class EmailBase {
 			}
 		}
 	}
-
+	
 	public String getFrom() {
 		return from;
 	}
@@ -96,6 +99,14 @@ public abstract class EmailBase {
 
 	public void setDate(Calendar date) {
 		this.date = date;
+	}
+	
+	public Long getWebuid() {
+		return webuid;
+	}
+	
+	public void setWebuid(Long webuid) {
+		this.webuid = webuid;
 	}
 
 	@Override

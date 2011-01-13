@@ -16,6 +16,8 @@ public class Main {
 		Server server = new Server();
 		server.run();
 		
+		//DBManager.getInstance().getLastMessageWebuid();
+		
 //		DBManager dbManager = DBManager.getInstance();
 //		Message mw = new Message(1,1L,"Mon premier message!".getBytes());
 //		dbManager.saveMessage(mw);

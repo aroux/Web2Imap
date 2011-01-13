@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,6 +32,7 @@ import org.htmlparser.util.ParserException;
 
 import com.engine.MailGateway;
 import com.gmail.html.WebParser;
+import com.gmail.utils.Utils;
 import com.webmail.data.EmailRaw;
 import com.webmail.data.EmailSummary;
 import com.webmail.exc.WebParserException;
@@ -41,13 +46,19 @@ public class GmailConnection {
 
 	private final WebParser wp;
 
-	private List<EmailSummary> emailsSummary;
+	//private List<EmailSummary> emailsSummary;
 
 	private final static String GOOGLE_AUTH_URL = "https://www.google.com/accounts/ServiceLoginAuth";
-	private static final String GMAIL_HOME = "http://www.gmail.com";
+	private final static String GMAIL_HOME = "http://www.gmail.com";
+	private final static String GMAIL_INBOX_BASENAME = "https://mail.google.com/mail/h/";
+	private final static String GMAIL_ORIGINAL_MAIL_PARAMS = "?v=om&th=";
 
 	private String homeCurrentLocation = null;
+	
+	private Integer numberMailsPerPage = null; 
 
+	private static final Pattern PAGE_URL_PATTERN = Pattern.compile("^p(\\d+)$");
+	
 	public GmailConnection() {
 		httpClient = new DefaultHttpClient();
 		wp = new WebParser();
@@ -139,6 +150,7 @@ public class GmailConnection {
 			//			Utils.inputStreamToFile(loginResponseContent, "C:\\Users\\Alexandre\\workspace\\GmailConnectivityTest\\data\\result.htm");
 			//System.out.println(redirectUrl);
 			refreshHomePage(redirectUrl);
+			homeCurrentLocation = wp.getCurrentLocation();
 			//Utils.inputStreamToFile(homePage, "C:\\Users\\Alexandre\\workspace\\GmailConnectivityTest\\data\\result.htm");
 		} catch (WebParserException e) {
 			loginFailed(e);
@@ -148,19 +160,52 @@ public class GmailConnection {
 			loginFailed(e);
 		}
 	}
+	
+//	private int getCurrentPageFromUrl(String url) {
+//		String basename = Utils.basename(url);
+//		
+//		Matcher matcher = PAGE_URL_PATTERN.matcher(basename);
+//		if (matcher.matches()) {
+//			return Integer.parseInt(matcher.group(1));
+//		} else {
+//			return 1;
+//		}
+//	}
 
-	public List<EmailSummary> getEmailsSummary(boolean refresh) {
-		if (refresh) {
+	public List<EmailSummary> getEmailsSummaryForPage(int page) {
+		Integer stArg = null;
+		if (page == 1) {
 			refreshHomePage(homeCurrentLocation);
+		} else {
+			stArg = (page-1)*numberMailsPerPage;
+			refreshHomePage(homeCurrentLocation + "/?st=" + stArg);
 		}
-		return emailsSummary;
+		
+		 List<EmailSummary> returnList = wp.getEmailSummaryList();
+		 if (numberMailsPerPage == null) {
+			 numberMailsPerPage = returnList.size();
+		 }
+		 
+		 return returnList;
+//		int pageDl = getCurrentPageFromUrl(wp.getCurrentLocation());
+//		if (pageDl == page) {
+//			return wp.getEmailSummaryList();
+//		} else {
+//			return Collections.emptyList();
+//		} 
 	}
 
 	public void refreshHomePage(String url) {
 		StringBuffer homePage = getPage(url);
 		wp.feedParser(homePage);
-		emailsSummary = wp.getEmailSummaryList();
-		homeCurrentLocation = wp.getCurrentLocation();
+		/*emailsSummary = wp.getEmailSummaryList();
+		homeCurrentLocation = wp.getCurrentLocation();*/
+	}
+	
+	public StringBuffer getOriginalMessageFromWebmailUID(Long wmuid) {
+		String url = GMAIL_INBOX_BASENAME + "/" + GMAIL_ORIGINAL_MAIL_PARAMS + Long.toHexString(wmuid);
+		StringBuffer originalMessage = getPage(url);
+		return originalMessage;
 	}
 
 	public EmailRaw getEmailRawContent(EmailSummary emailSummary) {
@@ -173,6 +218,10 @@ public class GmailConnection {
 
 		/*Utils.inputStreamToFile(emailContentPage, "C:\\Users\\Alexandre\\workspace\\GmailConnectivityTest\\data\\email_content.htm");*/
 	}
+	
+//	public EmailSummary getMostRecentEmailSummary() {
+//		emailsSummary.get(0);
+//	}
 
 	public void testSummary() {
 		FileInputStream fis;

@@ -190,8 +190,12 @@ public class WebParser {
 
 		getNextTagNode(iter); /* font */
 
+		String summary = "";
 		TextNode textNodeSummary = getNextTextNode(iter);
-		String summary = Translate.decode(formatOnOneLine(textNodeSummary.getText()).substring(3));
+		if (textNodeSummary != null) {
+			summary = Translate.decode(formatOnOneLine(textNodeSummary.getText()).substring(3));
+		}
+		 
 		//String summary = filteredNodes.elementAt(2).getChildren().elementAt(1).getChildren().elementAt(1).getChildren().elementAt(7).getText();
 		//summary = Translate.decode(formatOnOneLine(summary.substring(3)));
 

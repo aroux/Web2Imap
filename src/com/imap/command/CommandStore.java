@@ -35,6 +35,8 @@ public class CommandStore extends HashMap<String, Method> {
 					.getMethod("buildCommand", String.class, String.class, String.class));
 			this.put(ECommand.NOOP.getValue(), NoopCommand.class
 					.getMethod("buildCommand", String.class, String.class, String.class));
+			this.put(ECommand.SELECT.getValue(), SelectCommand.class
+					.getMethod("buildCommand", String.class, String.class, String.class));
 			//this.put(ECommand.AUTHENTICATE.getValue(), AuthenticateCommand.class
 			//		.getMethod("buildCommand", String.class, String.class, String.class));
 		}

@@ -14,7 +14,10 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import com.engine.da.DBManager;
+import com.engine.da.entities.Message;
 import com.engine.data.UserInformation;
+import com.webmail.data.EmailSummary;
 import com.webmail.exc.WebmailWrongLoginException;
 import com.webmail.service.IWebmailService;
 
@@ -26,13 +29,13 @@ public class MailGateway {
 	
 	private Map<String, Class<IWebmailService>> webmailServicesClassMap;
 	
-	private Map<String, IWebmailService> webmailServicesMap;
+	private Map<UserInformation, IWebmailService> webmailServicesMap;
 	
 	private Map<String, MailsFetcherThread> fetchers;
 	
 	private MailGateway() {
 		webmailServicesClassMap = new HashMap<String, Class<IWebmailService>>();
-		webmailServicesMap = new HashMap<String, IWebmailService>();
+		webmailServicesMap = new HashMap<UserInformation, IWebmailService>();
 		loadWebmailDescriptions();
 	}
 	
@@ -95,7 +98,7 @@ public class MailGateway {
 	
 	/**
 	 * This method executes login method of webmail module corresponding to
-	 * webmail module. If login fails, WebmailWrongLoginException is thrown.
+	 * userInfo. If login fails, WebmailWrongLoginException is thrown.
 	 * 
 	 * @param userInfo
 	 * @throws WebmailWrongLoginException
@@ -106,8 +109,11 @@ public class MailGateway {
 		WebmailWrongLoginException, InstantiationException, IllegalAccessException {
 		Class<IWebmailService> webmailServiceClass = webmailServicesClassMap.get(userInfo.getMailDomain());
 		IWebmailService webmailService = webmailServiceClass.newInstance();
+		webmailServicesMap.put(userInfo, webmailService);
 		webmailService.login(userInfo);
-
+		
+		// TEMP CODE
+		//List<EmailSummary> emails = webmailService.getAllEmailsSummaryFromWebmailUID(0L);
 	}
 	
 	public List<String> getDirectories(String pattern) {
@@ -120,5 +126,20 @@ public class MailGateway {
 			directories.add("");
 		}
 		return directories;
+	}
+	
+	public void refreshSelectedDirectory(UserInformation userInfo, String directory) {
+		// For the moment, support only mailbox directory
+		IWebmailService webmailService = webmailServicesMap.get(userInfo);
+		Long lastWebuid = DBManager.getInstance().getLastMessageWebuid();
+		List<EmailSummary> newEmails = webmailService.getAllEmailsSummaryFromWebmailUID(lastWebuid);
+		
+		for (EmailSummary es : newEmails) {
+			StringBuffer mailContent = webmailService.getMessageContentWebmailUID(es.getWebuid());
+			Message m = new Message();
+			m.setContent(mailContent.toString().getBytes());
+			m.setWebmailuid(es.getWebuid());
+			DBManager.getInstance().saveMessage(m);
+		}
 	}
 }
